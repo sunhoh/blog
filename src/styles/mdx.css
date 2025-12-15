@@ -16,6 +16,14 @@
   margin-top: 0px;
 }
 
+.mdx > :where(h1, h2) {
+  font-size: 1.5rem;
+}
+
+.mdx > :where(h3, h4) {
+  font-size: 1.25rem;
+}
+
 .mdx > :where(h1, h2, h3, h4) {
   font-weight: var(--font-weight-bold);
 }

@@ -11,10 +11,10 @@ interface Props {
 const { class: className, title, date, readingTime } = Astro.props;
 ---
 
-<div class={className}>
+<header class={className}>
   <h1 class="font-display text-5xl font-bold">{title}</h1>
   <div class="text-text-2">
     <span>{format(date, 'MMM dd, yyyy')}</span>
     {readingTime && <span>· {readingTime}</span>}
   </div>
-</div>
+</header>

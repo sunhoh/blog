@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { useState } from 'react';
+
 import { CloseIcon } from '~/components/ui/icons';
 import type { PostData } from '~/lib/types';
 import { cn } from '~/lib/utils';
@@ -19,11 +20,11 @@ export default function PostList({
 
   return (
     <>
-      <TagFilter
+      {/* <TagFilter
         tags={tags}
         selectedTag={selectedTag}
         setSelectedTag={setSelectedTag}
-      />
+      /> */}
       <PostYearList posts={filteredPosts} />
     </>
   );

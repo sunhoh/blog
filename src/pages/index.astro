@@ -1,7 +1,7 @@
 ---
 import { cfg } from '~/cfg';
 import BaseLayout from '~/components/layout/base-layout.astro';
-import BaseBio from '~/components/layout/base-bio.astro';
+// import BaseBio from '~/components/layout/base-bio.astro';
 import { getPostsCollection, getTags } from '~/lib/mdx/post';
 import PostList from '~/components/post-list';
 
@@ -10,7 +10,8 @@ const tags = getTags(posts);
 ---
 
 <BaseLayout>
-  <h1 class="font-display text-5xl font-bold">{cfg.title}</h1>
+  <!-- <h1 class="font-display text-5xl font-bold">{cfg.title}</h1> -->
+  <h1 class="font-display text-5xl font-bold">Home</h1>
   <!-- <BaseBio class="my-14" /> -->
   <PostList client:load posts={posts} tags={tags} />
 </BaseLayout>

@@ -19,6 +19,7 @@ import PostTags from '~/components/layout/post-tags.astro';
 import PostShare from '~/components/layout/post-share.astro';
 import PostNav from '~/components/layout/post-nav.astro';
 import { GiscusSection } from '~/components/giscus';
+import DynamicToc from '~/components/ui/dynamic-toc';
 
 type Props = {
   post: CollectionEntry<'posts'>;
@@ -28,6 +29,7 @@ type Props = {
 };
 
 const { post, relatedPosts, prevPost, nextPost } = Astro.props;
+const { title, date, updatedDate } = post.data;
 const tags = post.data.tags ?? [];
 const toc = getTableOfContents(post.body);
 
@@ -51,12 +53,12 @@ const { Content, remarkPluginFrontmatter } = await post.render();
     <hr />
   </article>
   <div class="flex flex-col">
-    <PostShare {post} class="mb-14" />
-    <BaseBio class="mt-5 mb-10" />
-    <PostTags {tags} class="mb-10" />
+    <!-- <PostShare {post} class="mb-14" /> -->
+    <!-- <BaseBio class="mt-5 mb-10" /> -->
+    <!-- <PostTags {tags} class="mb-10" /> -->
     <PostRelated {relatedPosts} />
     <PostNav prevPost={prevPost} nextPost={nextPost} class="my-10" />
-    {cfg.giscus && <GiscusSection client:load giscus={cfg.giscus} />}
+    <!-- {cfg.giscus && <GiscusSection client:load giscus={cfg.giscus} />} -->
   </div>
   {/* asides */}
   <BaseLeftAside>
@@ -66,4 +68,5 @@ const { Content, remarkPluginFrontmatter } = await post.render();
   <MediumZoomScript />
   <TwoslashFloatingScript />
   <CopyCodeScript />
+  <DynamicToc client:only="react" {title} />
 </BaseLayout>
