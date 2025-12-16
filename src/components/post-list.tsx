@@ -2,8 +2,8 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 
 import { CloseIcon } from '~/components/ui/icons';
-import type { PostData } from '~/lib/types';
-import { cn } from '~/lib/utils';
+import type { PostData } from '~/libs/types';
+import { cn } from '~/libs/utils';
 
 export default function PostList({
   posts,

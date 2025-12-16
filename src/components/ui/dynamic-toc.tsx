@@ -1,9 +1,9 @@
 import { throttle } from 'es-toolkit';
-// import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
 import { AnimatePresence, motion, useScroll, useSpring } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-// import ProgressCircular from '~/components/ui/progress-circular';
-import { cn } from '~/lib/utils';
+import ProgressCircular from '~/components/ui/progress-circular';
+import { cn } from '~/libs/utils';
 
 interface DynamicTocProps {
   title: string;
@@ -62,7 +62,7 @@ export default function DynamicToc({ title }: DynamicTocProps) {
               tabIndex={0}
               ref={rootRef}
               layout
-              className="relative max-w-[300px] min-w-[150px] border border-white/10 bg-gray-200/70 backdrop-blur-md backdrop-saturate-[1.15] select-none sm:max-w-[400px]"
+              className="relative max-w-[300px] min-w-[150px] shadow-lg backdrop-blur-md backdrop-saturate-[1.15] select-none sm:max-w-[400px]"
               style={{
                 borderRadius: expanded ? 16 : 300,
                 padding: expanded ? '16px 16px' : '8px 12px',
@@ -82,21 +82,21 @@ export default function DynamicToc({ title }: DynamicTocProps) {
               onClick={() => setExpanded(!expanded)}
             >
               <motion.div layout="position" className="flex">
-                {/* <ProgressCircular
+                <ProgressCircular
                   progress={progress}
                   className="sm:translate-y-[2px]"
-                /> */}
-                <span className="text-heading ml-1.5 inline-block truncate font-serif text-sm font-bold sm:ml-1">
+                />
+                <span className="ml-1.5 inline-block truncate font-serif text-sm font-bold sm:ml-1">
                   {title}
                 </span>
-                {/* <ChevronDownIcon
+                <ChevronDownIcon
                   className={cn(
                     'ml-0.5 inline-block size-4 cursor-pointer transition-transform duration-300 ease-in-out',
                     expanded
                       ? 'translate-y-[2px]'
                       : 'translate-y-[1px] rotate-180',
                   )}
-                /> */}
+                />
               </motion.div>
               {expanded && (
                 <motion.div
@@ -137,7 +137,7 @@ export default function DynamicToc({ title }: DynamicTocProps) {
                                 bounce: 0.25,
                               }}
                             >
-                              <div className="size-1 shrink-0 rounded-full bg-gray-700" />
+                              <div className="size-1 shrink-0 rounded-full bg-black" />
                             </motion.div>
                           )}
                         </AnimatePresence>

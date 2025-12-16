@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import type { APIRoute } from 'astro';
 import { cfg } from '~/cfg';
-import { getPostsCollection } from '~/lib/mdx/post';
+import { getPostsCollection } from '~/libs/mdx/post';
 
 export const GET: APIRoute = async () => {
   const postList = await getPostsCollection();

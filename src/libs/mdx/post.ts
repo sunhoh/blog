@@ -1,6 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { compareTwoStrings } from '~/lib/dice-coefficient';
-import { isProd } from '~/lib/utils';
+import { compareTwoStrings } from '~/libs/dice-coefficient';
+import { isProd } from '~/libs/utils';
 
 export const isDraft = (post: CollectionEntry<'posts'>) => {
   return isProd && post.data.draft;

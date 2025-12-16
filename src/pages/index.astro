@@ -2,7 +2,7 @@
 import { cfg } from '~/cfg';
 import BaseLayout from '~/components/layout/base-layout.astro';
 // import BaseBio from '~/components/layout/base-bio.astro';
-import { getPostsCollection, getTags } from '~/lib/mdx/post';
+import { getPostsCollection, getTags } from '~/libs/mdx/post';
 import PostList from '~/components/post-list';
 
 const posts = await getPostsCollection();

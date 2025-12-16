@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { LinkIcon, MaterialCheckIcon } from '~/components/ui/icons';
-import { cn } from '~/lib/utils';
+import { cn } from '~/libs/utils';
 
 export default function CopyLink({
   href,

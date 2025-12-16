@@ -1,6 +1,6 @@
 ---
 import PostLayout from '~/components/layout/post-layout.astro';
-import { getPostsCollection, getRelatedPosts } from '~/lib/mdx/post';
+import { getPostsCollection, getRelatedPosts } from '~/libs/mdx/post';
 
 export async function getStaticPaths() {
   const posts = await getPostsCollection();

@@ -2,7 +2,7 @@ import type { SiteConfig } from '~/cfg-schema';
 
 const config: SiteConfig = {
   siteUrl: 'https://whitespace-blog-template.netlify.app',
-  title: 'sunhoh blog',
+  title: 'blog',
   titleTemplate: '%s',
   description: 'minimalism coding blog build with astro',
   favicon: '/favicon.svg',

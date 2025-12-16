@@ -1,5 +1,5 @@
 ---
-import type { TocSection } from '~/lib/mdx/toc';
+import type { TocSection } from '~/libs/mdx/toc';
 
 interface Props {
   toc: TocSection[];
@@ -44,7 +44,7 @@ const { toc } = Astro.props;
 
 <script>
   import { throttle } from 'es-toolkit';
-  import { getRootCssVar } from '~/lib/utils';
+  import { getRootCssVar } from '~/libs/utils';
 
   let scrollHandler: () => void;
 

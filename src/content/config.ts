@@ -1,5 +1,5 @@
 import { defineCollection } from 'astro:content';
-import { postSchema } from '~/lib/types';
+import { postSchema } from '~/libs/types';
 
 const postsCollection = defineCollection({
   type: 'content',

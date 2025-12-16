@@ -9,7 +9,7 @@ import MediumZoomScript from '~/components/script/medium-zoom-script.astro';
 import TwoslashFloatingScript from '~/components/script/twoslash-floating-script.astro';
 import CopyCodeScript from '~/components/script/copy-code-script.astro';
 import PostImage from '~/components/layout/post-image.astro';
-import { getTableOfContents } from '~/lib/mdx/toc';
+import { getTableOfContents } from '~/libs/mdx/toc';
 import BaseLeftAside from '~/components/layout/base-left-aside.astro';
 import BaseBio from '~/components/layout/base-bio.astro';
 import PostToc from '~/components/layout/post-toc.astro';
@@ -58,7 +58,7 @@ const { Content, remarkPluginFrontmatter } = await post.render();
     <!-- <PostTags {tags} class="mb-10" /> -->
     <PostRelated {relatedPosts} />
     <PostNav prevPost={prevPost} nextPost={nextPost} class="my-10" />
-    <!-- {cfg.giscus && <GiscusSection client:load giscus={cfg.giscus} />} -->
+    {cfg.giscus && <GiscusSection client:load giscus={cfg.giscus} />}
   </div>
   {/* asides */}
   <BaseLeftAside>

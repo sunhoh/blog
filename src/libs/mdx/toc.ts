@@ -1,4 +1,4 @@
-import { slugify } from '~/lib/mdx/slug';
+import { slugify } from '~/libs/mdx/slug';
 
 export type TocSection = {
   slug: string;
