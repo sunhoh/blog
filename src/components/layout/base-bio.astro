@@ -17,23 +17,11 @@ const {
 ---
 
 <div class={cn('flex gap-2', Astro.props.class)}>
-  {
-    avatar && (
-      <div class="h-14 w-14 flex-shrink-0">
-        <Image
-          src={avatar}
-          alt="프로필 이미지"
-          width={192}
-          height={192}
-          class="pointer-events-none h-full w-full rounded-full border-4 object-cover select-none"
-        />
-      </div>
-    )
-  }
   <div>
     <div class="mb-1 pl-1.5 leading-tight">
-      <p class="font-bold">{name}</p>
-      <p class="text-text-2 max-w-sm text-sm">{description}</p>
+      <p class="text-text-2 max-w-sm text-sm whitespace-pre-line">
+        {description}
+      </p>
     </div>
     <div class="flex text-xs">
       {

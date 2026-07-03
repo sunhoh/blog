@@ -1,5 +1,6 @@
 ---
 import { cn } from '~/libs/utils';
+import { MoonIcon, SunIcon } from '~/components/ui/icons';
 ---
 
 <button
@@ -11,16 +12,13 @@ import { cn } from '~/libs/utils';
   )}
 >
   <span class="sr-only">toggle theme</span>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="32"
-    height="32"
-    viewBox="0 0 24 24"
-    ><path
-      fill="currentColor"
-      d="M16.286 20C19.442 20 22 17.472 22 14.353c0-2.472-1.607-4.573-3.845-5.338C17.837 6.194 15.415 4 12.476 4C9.32 4 6.762 6.528 6.762 9.647c0 .69.125 1.35.354 1.962a4.4 4.4 0 0 0-.83-.08C3.919 11.53 2 13.426 2 15.765S3.919 20 6.286 20z"
-    ></path>
-  </svg>
+  <MoonIcon data-theme-icon="moon" width="20" height="20" />
+  <SunIcon
+    data-theme-icon="sun"
+    width="20"
+    height="20"
+    style={{ display: 'none' }}
+  />
 </button>
 
 <script>
@@ -28,6 +26,16 @@ import { cn } from '~/libs/utils';
   import { STORAGE_THEME_KEY, THEME_MAP } from '~/libs/theme';
 
   const themeList = Object.keys(THEME_MAP);
+
+  function updateIcon(theme: string) {
+    const isDark = theme === 'dark';
+    document.querySelectorAll('[data-theme-icon="moon"]').forEach((el) => {
+      (el as HTMLElement).style.display = isDark ? 'none' : '';
+    });
+    document.querySelectorAll('[data-theme-icon="sun"]').forEach((el) => {
+      (el as HTMLElement).style.display = isDark ? '' : 'none';
+    });
+  }
 
   function switchTheme() {
     const currentThemeIndex = themeList.findIndex((c) =>
@@ -41,6 +49,7 @@ import { cn } from '~/libs/utils';
     localStorage.setItem(STORAGE_THEME_KEY, nextTheme);
     document.documentElement.classList.add(nextTheme);
     changeGiscusTheme(nextTheme);
+    updateIcon(nextTheme);
   }
 
   function onToggleTheme() {
@@ -49,10 +58,16 @@ import { cn } from '~/libs/utils';
   }
 
   function initClickListener() {
+    const currentTheme =
+      themeList.find((c) => document.documentElement.classList.contains(c)) ??
+      'light';
+    updateIcon(currentTheme);
+
     document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
       button.addEventListener('click', onToggleTheme);
     });
   }
+
   document.addEventListener('DOMContentLoaded', initClickListener);
   document.addEventListener('astro:page-load', initClickListener);
 </script>

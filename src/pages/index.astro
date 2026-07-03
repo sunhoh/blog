@@ -1,17 +1,16 @@
 ---
 import { cfg } from '~/cfg';
 import BaseLayout from '~/components/layout/base-layout.astro';
-// import BaseBio from '~/components/layout/base-bio.astro';
-import { getPostsCollection, getTags } from '~/libs/mdx/post';
+import BaseBio from '~/components/layout/base-bio.astro';
+import { getPostsCollection } from '~/libs/mdx/post';
 import PostList from '~/components/post-list';
 
-const posts = await getPostsCollection();
-const tags = getTags(posts);
+const posts = (await getPostsCollection()).slice(0, 3);
 ---
 
 <BaseLayout>
-  <!-- <h1 class="font-display text-5xl font-bold">{cfg.title}</h1> -->
-  <h1 class="font-display text-5xl font-bold">Home</h1>
-  <!-- <BaseBio class="my-14" /> -->
-  <PostList client:load posts={posts} tags={tags} />
+  <h1 class="font-display text-5xl font-bold">{cfg.title}</h1>
+  <BaseBio class="my-14" />
+  <h3 class="font-display mb-4 text-2xl font-bold">Recent</h3>
+  <PostList client:load posts={posts} tags={[]} />
 </BaseLayout>

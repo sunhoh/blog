@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { CloseIcon } from '~/components/ui/icons';
 import type { PostData } from '~/libs/types';
 import { cn } from '~/libs/utils';
-import { getCardColor, getCardNoise } from '~/utils/post.utils';
 
 export default function PostList({
   posts,
@@ -21,14 +20,12 @@ export default function PostList({
 
   return (
     <>
-      {tags.length > 0 && (
-        <TagFilter
-          tags={tags}
-          selectedTag={selectedTag}
-          setSelectedTag={setSelectedTag}
-        />
-      )}
-      <PostGrid posts={filteredPosts} />
+      <TagFilter
+        tags={tags}
+        selectedTag={selectedTag}
+        setSelectedTag={setSelectedTag}
+      />
+      <PostYearList posts={filteredPosts} />
     </>
   );
 }
@@ -85,50 +82,46 @@ function TagFilter({
   );
 }
 
-function PostGrid({ posts }: { posts: PostData[] }) {
+function PostYearList({ posts }: { posts: PostData[] }) {
+  const yearList = Object.entries(
+    posts.reduce<{ [year: string]: PostData[] }>((ac, post) => {
+      const year = new Date(post.data.date).getFullYear();
+      if (!ac[year]) ac[year] = [];
+      ac[year].push(post);
+      return ac;
+    }, {}),
+  ).sort(([yearA], [yearB]) => +yearB - +yearA);
+
   return (
-    <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-      {posts.map((post, i) => (
-        <PostCard key={post.slug} post={post} index={i} />
-      ))}
+    <div className="group my-14 space-y-7 border-l pl-4">
+      {yearList.map(([year, postList]) => {
+        return (
+          <div key={year} className="group/year relative">
+            <div className="absolute -left-20 select-none">
+              <h2 className="group-hover/year:bg-gray-soft -mx-1 rounded-md px-1 transition group-hover:opacity-40 group-hover/year:opacity-100!">
+                {year}
+              </h2>
+            </div>
+            <ul className="flex flex-col items-start gap-2">
+              {postList.map((post) => {
+                return (
+                  <li key={post.slug}>
+                    <a
+                      href={`/posts/${post.slug}`}
+                      className="hover:bg-gray-soft -mx-1 flex items-center gap-2 rounded-md px-1 transition group-hover:opacity-60 hover:opacity-100!"
+                    >
+                      <span className="text-text-1">{post.data.title}</span>
+                      <span className="text-text-2 shrink-0 text-sm">
+                        {format(new Date(post.data.date), 'MM. dd.')}
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
     </div>
-  );
-}
-
-function PostCard({ post, index }: { post: PostData; index: number }) {
-  const color = getCardColor(index);
-  const noise = getCardNoise(index);
-  const initials = post.data.title
-    .split(' ')
-    .slice(0, 2)
-    .map((w: string) => w[0])
-    .join('')
-    .toUpperCase();
-
-  return (
-    <a href={`/posts/${post.slug}`} className="group block">
-      <div
-        className="relative mb-3 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl transition group-hover:brightness-110"
-        style={{ background: color }}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 mix-blend-soft-light"
-          style={{
-            backgroundImage: `url(${noise})`,
-            backgroundSize: '300px 300px',
-            opacity: 1,
-          }}
-        />
-        <span className="relative z-10 text-2xl font-bold text-white/80 select-none">
-          {initials}
-        </span>
-      </div>
-      <p className="text-text-1 line-clamp-2 text-sm leading-snug font-semibold group-hover:underline">
-        {post.data.title}
-      </p>
-      <p className="text-text-2 mt-1 text-xs">
-        {format(new Date(post.data.date), 'MMM d, yyyy')}
-      </p>
-    </a>
   );
 }

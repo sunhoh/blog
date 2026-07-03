@@ -1,20 +1,98 @@
 ---
-import { BackIcon } from '~/components/ui/icons';
 import ThemeToggle from '~/components/ui/theme-toggle.astro';
+import { MENUS } from '~/constants/menu.constants';
 
-const isRoot = Astro.url.pathname === '/';
+const pathname = Astro.url.pathname;
 ---
 
-<div class="mb-10 flex items-center gap-2 font-serif font-semibold">
-  {
-    !isRoot && (
-      <a
-        class="hover:bg-gray-soft inline-block rounded-md p-1 text-2xl transition active:scale-95"
-        href="/"
-      >
-        <BackIcon />
-      </a>
-    )
-  }
-  <ThemeToggle class="ml-auto" />
+<div id="nav-wrapper" class="mb-10">
+  <div
+    id="base-nav"
+    class="nav flex items-center gap-2 font-serif font-semibold"
+  >
+    <nav class="flex items-center gap-1">
+      {
+        MENUS.map(({ label, href }) => {
+          const isActive =
+            href === '/' ? pathname === '/' : pathname.startsWith(href);
+          return (
+            <a
+              href={href}
+              class:list={[
+                'rounded-md px-3 py-1 text-sm transition active:scale-95',
+                isActive
+                  ? 'bg-gray-soft text-foreground'
+                  : 'text-muted-foreground hover:bg-gray-soft hover:text-foreground',
+              ]}
+            >
+              {label}
+            </a>
+          );
+        })
+      }
+    </nav>
+    <ThemeToggle class="ml-auto" />
+  </div>
 </div>
+
+<script>
+  function initNav() {
+    const nav = document.getElementById('base-nav');
+    const wrapper = document.getElementById('nav-wrapper');
+    if (!nav || !wrapper) return;
+
+    let floating = false;
+
+    const update = () => {
+      const threshold = wrapper.offsetTop + wrapper.offsetHeight;
+      const shouldFloat = window.scrollY > threshold;
+      if (shouldFloat === floating) return;
+      floating = shouldFloat;
+
+      if (shouldFloat) {
+        wrapper.style.height = `${nav.offsetHeight}px`;
+        nav.classList.add('nav--floating');
+      } else {
+        wrapper.style.height = '';
+        nav.classList.remove('nav--floating');
+      }
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+
+  initNav();
+  document.addEventListener('astro:after-swap', initNav);
+</script>
+
+<style>
+  .nav {
+    transition:
+      padding 0.3s ease,
+      border-radius 0.3s ease,
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .nav--floating {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    padding: 0.375rem 0.75rem;
+    border-radius: 100px;
+    backdrop-filter: blur(16px) saturate(1.5);
+    -webkit-backdrop-filter: blur(16px) saturate(1.5);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.dark) .nav--floating {
+    background: rgba(18, 18, 18, 0.75);
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.07);
+  }
+</style>

@@ -2,7 +2,7 @@ import type { SiteConfig } from '~/cfg-schema';
 
 const config: SiteConfig = {
   siteUrl: 'https://whitespace-blog-template.netlify.app',
-  title: 'blog',
+  title: 'Hello World',
   titleTemplate: '%s',
   description: 'minimalism coding blog build with astro',
   favicon: '/favicon.svg',
@@ -14,28 +14,16 @@ const config: SiteConfig = {
   bio: {
     name: '이선호',
     avatar: '/avatar.avif',
-    description: '',
+    description: `환영합니다! /posts에서 문서를 확인하실 수 있습니다.\n현재 의료 서비스(MSO)에서 근무하고 있습니다.`,
     links: [
       {
         label: 'mail',
-        url: 'mailto:your-email@example.com',
+        url: 'dltjsgho94@gmail.com',
       },
       {
         label: 'github',
-        url: 'https://github.com/your-github-username',
+        url: 'https://github.com/sunhoh',
       },
-      // {
-      //   label: 'linkedin',
-      //   url: 'https://www.linkedin.com/in/your-linkedin-username',
-      // },
-      // {
-      //   label: 'x',
-      //   url: 'https://twitter.com/your-twitter-username',
-      // },
-      // {
-      //   label: 'instagram',
-      //   url: 'https://www.instagram.com/your-instagram-username',
-      // },
     ],
   },
   // @see https://giscus.app/
