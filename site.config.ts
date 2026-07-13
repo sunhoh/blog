@@ -12,9 +12,9 @@ const config: SiteConfig = {
     websiteId: '3e44b81b-09f0-4eaf-8c30-aad1b17e7903',
   },
   bio: {
-    name: '이선호',
+    name: 'sunhoh',
     avatar: '/avatar.avif',
-    description: `환영합니다! /posts에서 문서를 확인하실 수 있습니다.\n현재 의료 서비스(MSO)에서 근무하고 있습니다.`,
+    description: `환영합니다! /posts에서 문서를 확인하실 수 있습니다.\n현재 의료 서비스(MSO)에서 개발하고 있습니다.`,
     links: [
       {
         label: 'mail',

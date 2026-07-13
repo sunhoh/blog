@@ -1,0 +1,175 @@
+---
+title: '🚧 리소스 최적화 하기(Image)'
+description: 'IntersectionObserver를 활용한 이미지 Lazy Mount로 리소스 최적화하기'
+date: 2025-01-20
+updatedDate: 2024-11-20 16:19:26
+draft: false
+tags:
+  - optimization
+  - next.js
+---
+
+이미지가 상당히 많이 보여지는 페이지에서
+영상을 보기 전에 모든 영상은 썸네일을 보여주고 있고 그 썸네일을 mouse hover하면 또 다른 포멧의 이미지를 요청해서 보여주는 기능까지 너무 많은 **이미지 리소스를 줄이고자 최적화를** 하려고 한다.
+
+**현재** `next/image`를 사용해서 어느 정도 리소스는 줄였지만 좀 더 최적화 해보자.
+
+> `next/image`가 떠먹여주는 이미지 최적화는 [next/image 파헤치기](/posts/next-image) 참고
+
+## 현재 보여지는 뷰에서만 이미지 리소스 가져오기
+
+front에서 우선 리소스를 줄이는 방법으로는 코드 splitting이 있다.
+
+next에서는 `next/dynamic` 을 사용해서 splitting을 하는데 내가 궁금했던 점은
+
+> 내가 보이는 뷰에 있는 데이터만 가져오고 싶은데
+> code splitting을 해도 보이지 않는 데이터들의 리소스 파일들을 가져옴…
+
+그래서 검색을 해보니 `IntersectionObserver` 를 사용해서 현재 스크롤 부분을 감지를 통해 데이터 리소스를 가져올 수 있다는 것.
+
+여기서 또 궁금했던 점이 `IntersectionObserver` 사용한다 해도 RSC로 띄워진 페이지에서 처음에 data를 한번 요청해서 다 가져올 텐데?
+결국에 내가 하고 싶은 건 그 한 번의 데이터 패치로 리소스가 적게 들어오는 걸 원했던 것..
+
+### GPT선생님께 질문
+
+Q. 선생님 근데 NEXTJS에서는 첫 페이지는 SSR로 그려주고 있는데 보이는 부분만 데이터를 가져올 수 있어요?
+
+A. 진짜 핵심을 찔렀다. 👏
+Next.js에서 **첫 페이지는 기본적으로 SSR(Server-Side Rendering)**이기 때문에, `<img src="...">` 가 SSR 시점에 들어가면 클라이언트가 오기도 전에 이미지 다운로드가 시작될 수 있어요.
+
+**💣 그래서 문제는?**
+
+| 상황                                   | 결과                                                     |
+| -------------------------------------- | -------------------------------------------------------- |
+| `<img src="...">` 가 SSR에 포함됨      | ✅ 브라우저가 페이지 도착하자마자 이미지 다운로드 시작   |
+| `<img data-src="...">` 만 SSR에 포함됨 | ✅ 다운로드 안 함 (클라이언트에서 JS 실행될 때까지 대기) |
+
+| 시점                | 동작                                                   |
+| ------------------- | ------------------------------------------------------ |
+| SSR 시              | `<img>` 태그는 내려가지만 `src` 없음 → 브라우저는 무시 |
+| 클라이언트 mount 후 | IntersectionObserver로 `src` 설정 → 그때 네트워크 요청 |
+
+---
+
+> SSR 시점에 **`src` 없이 내려보내고**, **CSR에서 IntersectionObserver로 `src`를 설정**하면 **그 순간에만 네트워크 요청이 발생함!**
+> 즉, 비동기로 받아온 이미지 url를 **img tag**에 src 없이 내보내면 네트워크 요청 안한다?
+
+그럼 임의로 데이터를 **`data-*`** 에 저장하고 `entry.target.dataset.src` 형태로 값에 접근
+
+```jsx
+useEffect(() => {
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        entry.target.src = entry.target.dataset.src;
+        observer.unobserve(entry.target);
+      }
+    },
+    { root: null, rootMargin: 0, threshold: 1 },
+  );
+  observer.observe(targetRef.current as Element);
+  return () => observer.disconnect();
+}, []);
+
+return (
+  <div className="Card text-center">
+    <picture>
+      <source data-srcset={props.webp} type="image/webp" />
+      <img data-src={props.image} ref={imgRef} />
+    </picture>
+    <div>{props.children}</div>
+  </div>
+);
+```
+
+무슨 말인지는 이해했지만 **img tag**로 변경할 때 고려해야 하는 **부분들이 생긴다.**
+`next/image`를 사용함으로써 `next/image`가 떠먹여주는 최적화를 포기할 순 없고 그리고 보통 이미지만 따로 보여주는 컴포넌트보단 디자인이 된 컴포넌트 안에 이미지가 있기 때문
+
+---
+
+## 최종 방법
+
+리소스받아오는데 지연되는 컴포넌트를 **`IntersectionObserver`활용한 Lazy Mount** 하기
+
+`next/dynamic` 을 이용해서 code splitting할 component 준비
+
+```jsx
+const DynamicComponents = dynamic(() => import('@/components/page'), {
+  loading: () => <div className="h-[300px]">...loading</div>,
+  ssr: false,
+});
+```
+
+`IntersectionObserver` 로직을 작성할껀데 **custom hook**으로 만들어서 사용
+
+```jsx
+const useLazyLoadObserver = (
+  targetRef: { current: Element | null | (Element | null)[] },
+  callback: (entry: IntersectionObserverEntry) => void,
+  dependencies: any[] = [],
+) => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          callback(entry);
+          observer.unobserve(entry.target);
+        }
+      },
+      { root: null, rootMargin: '50px', threshold: 0.1 },
+    );
+
+    if (targetRef.current) {
+      if (Array.isArray(targetRef.current)) {
+        (targetRef.current as Element[]).forEach(ref => {
+          if (ref) observer.observe(ref);
+        });
+      } else {
+        observer.observe(targetRef.current as Element);
+      }
+    }
+
+    return () => observer.disconnect();
+  }, [...dependencies]);
+};
+
+export default useLazyLoadObserver;
+```
+
+`targetRef`를 배열로 관리해도 각 ref 구간에만 데이터 패치가 되는걸 확인할 수 있었다.
+
+```tsx
+ref={(el: HTMLDivElement | null) => { targetRef.current[index] = el }}
+```
+
+---
+
+## 최적화 전 후 비교
+
+적용 전
+
+![최적화 전](/images/optimizing-resources-images/tvcf-before.png)
+
+※ 이미지 최적화도 하지 않은 페이지
+
+적용 후
+
+![최적화 후](/images/optimizing-resources-images/tvcf-after.png)
+
+※ 이미지 최적화, IntersectionObserver 활용한 Lazy Mount 도입한 페이지
+
+**효과는 굉장했다.**
+
+| 항목                 | 최적화 전            | 최적화 후           | 감소율 / 최적화율   |
+| -------------------- | -------------------- | ------------------- | ------------------- |
+| **요청 수**          | 355 / 455            | 74 / 123            | 약 **79% 감소**     |
+| **전송량**           | 9,438 kB / 10,558 kB | 16.1 kB / 17,184 kB | **99.8% 이상 감소** |
+| **리소스 크기**      | 9,372 kB / 12,680 kB | 435 kB / 75,321 kB  | **95.4% 감소**      |
+| **페이지 완료 시간** | 53.02초              | 11.33초             | **78.6% 빨라짐**    |
+
+&nbsp;
+&nbsp;
+
+### 참고
+
+https://teawon.github.io/book/perfomence-3/

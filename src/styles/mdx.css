@@ -454,4 +454,42 @@
   }
 }
 
+/* ================================================== */
+/* details / summary */
+/* ================================================== */
+
+.mdx details {
+  padding: 0 1rem;
+  border-left: 4px solid var(--c-gray-soft);
+}
+
+.mdx details summary {
+  cursor: pointer;
+  margin: 0.75rem 0;
+  font-weight: var(--font-weight-bold);
+  list-style: none;
+}
+
+.mdx details summary::before {
+  display: inline-block;
+  margin-right: 0.5rem;
+  content: '▶';
+  transition: transform 0.2s;
+}
+
+.mdx details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.mdx details :where(h1, h2) {
+  font-size: 1.5rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.mdx details :where(h3, h4) {
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-bold);
+  margin-top: 1rem;
+}
+
 /* ---- ---- */
