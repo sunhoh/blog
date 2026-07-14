@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { CloseIcon } from '~/components/ui/icons';
 import type { PostData } from '~/libs/types';
 import { cn } from '~/libs/utils';
-import { getCardColor, getCardNoise } from '~/utils/post.utils';
 
 export default function PostList({
   posts,
@@ -87,47 +86,32 @@ function TagFilter({
 
 function PostGrid({ posts }: { posts: PostData[] }) {
   return (
-    <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {posts.map((post, i) => (
-        <PostCard key={post.slug} post={post} index={i} />
+        <PostCard key={post.slug} post={post} />
       ))}
     </div>
   );
 }
 
-function PostCard({ post, index }: { post: PostData; index: number }) {
-  const color = getCardColor(index);
-  const noise = getCardNoise(index);
-  const initials = post.data.title
-    .split(' ')
-    .slice(0, 2)
-    .map((w: string) => w[0])
-    .join('')
-    .toUpperCase();
-
+function PostCard({ post }: { post: PostData }) {
   return (
-    <a href={`/posts/${post.slug}`} className="group block">
-      <div
-        className="relative mb-3 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl transition group-hover:brightness-110"
-        style={{ background: color }}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 mix-blend-soft-light"
-          style={{
-            backgroundImage: `url(${noise})`,
-            backgroundSize: '300px 300px',
-            opacity: 1,
-          }}
-        />
-        <span className="relative z-10 text-2xl font-bold text-white/80 select-none">
-          {initials}
-        </span>
+    <a
+      href={`/posts/${post.slug}`}
+      className="group flex h-32 flex-col justify-between rounded-xl border-neutral-200 bg-neutral-50 p-4 shadow-sm transition hover:border-neutral-300 hover:bg-neutral-200 dark:border-neutral-700 dark:bg-neutral-800/60 dark:hover:bg-neutral-800"
+    >
+      <div>
+        <p className="text-text-1 line-clamp-2 text-base leading-snug font-bold group-hover:underline">
+          {post.data.title}
+        </p>
+        {post.data.description && (
+          <p className="text-text-2 mt-1.5 line-clamp-1 text-sm leading-relaxed">
+            {post.data.description}
+          </p>
+        )}
       </div>
-      <p className="text-text-1 line-clamp-2 text-sm leading-snug font-semibold group-hover:underline">
-        {post.data.title}
-      </p>
-      <p className="text-text-2 mt-1 text-xs">
-        {format(new Date(post.data.date), 'MMM d, yyyy')}
+      <p className="mt-4 text-xs font-medium text-orange-500">
+        {format(new Date(post.data.date), 'EEE MMM dd yyyy')}
       </p>
     </a>
   );

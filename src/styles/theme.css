@@ -25,7 +25,7 @@
 /* ================================================== */
 
 :root {
-  --spacing-page-w: 700px;
+  --spacing-page-w: 900px;
   --spacing-page-y: 128px;
   --spacing-page-x: max(24px, env(safe-area-inset-left));
 }
